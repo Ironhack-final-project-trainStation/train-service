@@ -22,4 +22,21 @@ public class TrainService {
             throw new TrainNotFoundException("Train not found");
         }
     }
+
+    public Train saveTrain(Train train) {
+        return trainRepository.save(train);
+    }
+
+    public Train updateTrain (String id, Train updated) {
+        Train train = findTrainById(id);
+        train.setDestination(updated.getDestination());
+        train.setMaxCapacity(updated.getMaxCapacity());
+        train.setDriverId(updated.getDriverId());
+        return trainRepository.save(train);
+    }
+
+    public void deleteTrain(String id){
+        Train train = findTrainById(id);
+        trainRepository.delete(train);
+    }
 }
