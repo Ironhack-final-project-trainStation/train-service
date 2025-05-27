@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import train_service.train_service.dtos.TrainDetailsDTO;
 import train_service.train_service.dtos.TravelerDTO;
 import train_service.train_service.exceptions.TrainNotFoundException;
 import train_service.train_service.feignclients.DriverFeignClient;
@@ -38,24 +39,24 @@ public class TrainController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getTrainWithPeople(@PathVariable String id) {
-        try{
-            Map<String, Object> data = trainService.g
+    @GetMapping("/{id}/info")
+    public ResponseEntity<?> getTrainInfo(@PathVariable String id) {
+        try {
+            TrainDetailsDTO details = trainService.findTrainInfoById(id);
+            return ResponseEntity.ok(details);
+        } catch (TrainNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+    }
 
-        Map<String, Object> response = new HashMap<>();
-
-        Train train = trainService.findTrainById(id);
-        response.put("Train", train);
-
-        Map<String, Object> driverData = driverFeignClient.getDriverByTrainId(id);
-        response.put("Driver", driverData.get("Driver"));
-
-        List<TravelerDTO> travelers = travelerFeignClient.getTravelerByTrainId(id);
-        response.put("Passengers", travelers);
-
-        return ResponseEntity.ok(response);
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getTrainById(@PathVariable String id) {
+        try {
+            Train foundTrain = trainService.findTrainById(id);
+            return new ResponseEntity<>(foundTrain, HttpStatus.OK);
+        } catch (TrainNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/destination/{destination}")

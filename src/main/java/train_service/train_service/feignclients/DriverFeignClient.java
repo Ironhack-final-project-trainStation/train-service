@@ -3,6 +3,7 @@ package train_service.train_service.feignclients;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import train_service.train_service.dtos.DriverDTO;
 
 import java.util.Map;
 
@@ -10,5 +11,5 @@ import java.util.Map;
 public interface DriverFeignClient {
 
     @GetMapping("api/driver/train/{trainId}")
-    Map<String, Object> getDriverByTrainId(@PathVariable String trainId);
+    DriverDTO getDriverByTrainId(@PathVariable String trainId);
 }
