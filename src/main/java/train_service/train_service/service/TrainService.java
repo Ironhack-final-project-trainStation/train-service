@@ -6,6 +6,8 @@ import train_service.train_service.exceptions.TrainNotFoundException;
 import train_service.train_service.models.Train;
 import train_service.train_service.repositories.TrainRepository;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -13,7 +15,15 @@ public class TrainService {
     @Autowired
     TrainRepository trainRepository;
 
-    public Train findTrainById(String id) throws TrainNotFoundException {
+    public List<Train> findAllTrains() throws TrainNotFoundException {
+        List<Train> trains = trainRepository.findAll();
+        if (trains.isEmpty()) {
+            throw new TrainNotFoundException("No trains found in the system");
+        }
+        return trains;
+    }
+
+    public Map<String, Object> findTrainById(String id) throws TrainNotFoundException {
         Optional<Train> foundTrain = trainRepository.findById(id);
 
         if(foundTrain.isPresent()) {
@@ -22,6 +32,14 @@ public class TrainService {
             throw new TrainNotFoundException("Train not found");
         }
     }
+
+    public Train findByDestination(String destination) throws TrainNotFoundException {
+        return trainRepository.findByDestination(destination)
+                .orElseThrow(() -> new TrainNotFoundException("No trains found for destination " + destination));
+
+    }
+
+
 
     public Train saveTrain(Train train) {
         return trainRepository.save(train);

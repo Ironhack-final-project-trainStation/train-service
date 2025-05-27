@@ -28,18 +28,22 @@ public class TrainController {
     @Autowired
     TravelerFeignClient travelerFeignClient;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getTrainById(@PathVariable String id) {
+    @GetMapping
+    public ResponseEntity<?> getAllTrains() {
         try {
-            Train foundTrain = trainService.findTrainById(id);
-            return new ResponseEntity<>(foundTrain, HttpStatus.OK);
-        } catch (TrainNotFoundException exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+            List<Train> trains = trainService.findAllTrains();
+            return new ResponseEntity<>(trains, HttpStatus.OK);
+        } catch (TrainNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("/{id}/details")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getTrainWithPeople(@PathVariable String id) {
+        try{
+            Map<String, Object> data = trainService.g
+        }
+
         Map<String, Object> response = new HashMap<>();
 
         Train train = trainService.findTrainById(id);
@@ -52,6 +56,16 @@ public class TrainController {
         response.put("Passengers", travelers);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/destination/{destination}")
+    public ResponseEntity<?> getTrainByDestination(@PathVariable String destination) {
+        try {
+            Train train = trainService.findByDestination(destination);
+            return ResponseEntity.ok(train);
+        } catch (TrainNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PostMapping
@@ -74,7 +88,7 @@ public class TrainController {
     public ResponseEntity<?> deleteTrain (@PathVariable String id) {
         try {
             trainService.deleteTrain(id);
-            return new ResponseEntity<>("Train deleted succesfully", HttpStatus.OK);
+            return new ResponseEntity<>("Train deleted successfully", HttpStatus.OK);
         } catch (TrainNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
