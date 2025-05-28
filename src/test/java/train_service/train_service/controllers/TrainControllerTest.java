@@ -2,6 +2,7 @@ package train_service.train_service.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -56,7 +57,26 @@ public class TrainControllerTest {
                 .andExpect(status().isOk());
     }
 
-    //falta trainByDestination y TrainById
+    @Test
+    void testFindById() throws Exception {
+        Train mockTrain = new Train("train1", 200, "Sevilla", 1L);
+
+        Mockito.when(trainService.findTrainById("train1")).thenReturn(mockTrain);
+
+        mockMvc.perform(get("/api/train/train1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.destination").value("Sevilla"));
+    }
+
+    @Test
+    void testFindByDestination() throws Exception {
+        Train mockTrain = new Train("train1", 200, "Sevilla", 1L);
+        Mockito.when(trainService.findByDestination("Sevilla")).thenReturn(mockTrain);
+        mockMvc.perform(get("/api/train/destination/Sevilla"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.destination").value("Sevilla"));
+    }
+
 
     @Test
     void testFindTrainById_ReturnsAlsoDetails() throws Exception {
