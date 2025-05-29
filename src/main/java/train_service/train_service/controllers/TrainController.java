@@ -1,8 +1,10 @@
 package train_service.train_service.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import train_service.train_service.dtos.TrainDetailsDTO;
 import train_service.train_service.dtos.TravelerDTO;
@@ -15,7 +17,7 @@ import train_service.train_service.service.TrainService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@Validated
 @RestController
 @RequestMapping("/api/train")
 public class TrainController {
@@ -70,13 +72,13 @@ public class TrainController {
     }
 
     @PostMapping
-    public ResponseEntity<Train> createTrain (@RequestBody Train train) {
+    public ResponseEntity<Train> createTrain (@RequestBody @Valid Train train) {
         Train newTrain = trainService.saveTrain(train);
         return new ResponseEntity<>(newTrain, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateTrain(@PathVariable String id, @RequestBody Train train) {
+    public ResponseEntity<?> updateTrain(@PathVariable String id, @RequestBody @Valid Train train) {
         try {
             Train updatedTrain = trainService.updateTrain(id, train);
             return new ResponseEntity<>(updatedTrain, HttpStatus.OK);
